@@ -3,7 +3,11 @@ FROM ubuntu:latest
 
 # Install apache, svn, php
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y apache2 apache2-utils subversion libapache2-mod-svn wget unzip php php-json libapache2-mod-php php-xml
+RUN apt-get update
+RUN apt-get install -y software-properties-common 
+RUN add-apt-repository ppa:ondrej/php 
+RUN apt-get update 
+RUN apt-get install -y apache2 apache2-utils subversion libapache2-mod-svn wget unzip php7.4 php7.4-json libapache2-mod-php7.4 php7.4-xml
 
 #Create directories and set permissions
 RUN mkdir /home/svn && touch /etc/subversion/passwd && chown www-data /etc/subversion/passwd && chown www-data /home/svn
@@ -24,6 +28,8 @@ ADD svnadmin/classes/util/global.func.php /opt/svnadmin/classes/util/global.func
 
 #Adding template data for svnadmin to already set pathes
 ADD svnadmin/data/config.tpl.ini /opt/svnadmin/data/config.tpl.ini
+
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 #Restart Apache2
 RUN service apache2 restart
